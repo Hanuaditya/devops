@@ -1,0 +1,162 @@
+Step 1: Create Maven Project
+
+Open Command Prompt and execute:
+
+mvn archetype:generate -DgroupId=com.example -DartifactId=maven-example -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+
+Navigate to project folder:
+
+cd maven-example
+Step 2: Update pom.xml
+
+Open pom.xml and replace with:
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example</groupId>
+    <artifactId>maven-example</artifactId>
+    <version>1.0-SNAPSHOT</version>
+
+    <dependencies>
+
+        <!-- JUnit Dependency -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <build>
+        <plugins>
+
+            <!-- Compiler Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
+
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+    </build>
+
+</project>
+Step 3: Create Java Program
+
+Open file:
+
+src/main/java/com/example/App.java
+
+Replace with:
+
+package com.example;
+
+public class App {
+
+    public static void main(String[] args) {
+
+        System.out.println("Hello, Maven");
+        System.out.println("This is the simple realworld example....");
+
+        int a = 5;
+        int b = 10;
+
+        System.out.println("Sum of " + a + " and " + b + " is " + sum(a, b));
+    }
+
+    public static int sum(int x, int y) {
+        return x + y;
+    }
+}
+Step 4: Build Maven Project
+
+Run:
+
+mvn clean install
+Step 5: Run Maven Application
+
+Run:
+
+mvn exec:java -Dexec.mainClass="com.example.App"
+Maven Output
+Hello, Maven
+This is the simple realworld example....
+Sum of 5 and 10 is 15
+Step 6: Migrate Maven Project to Gradle
+
+Run:
+
+gradle init
+
+When prompted:
+
+Found a Maven build. Generate a Gradle build from this?
+Type: yes
+Select build script DSL:
+1: Kotlin
+2: Groovy
+
+Type: 2
+Generate build using new APIs and behavior?
+Type: no
+Step 7: Update build.gradle
+
+Open build.gradle and replace with:
+
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.example'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.12'
+}
+
+application {
+    mainClass = 'com.example.App'
+}
+Step 8: Delete Old Test File
+
+Delete the old Maven-generated test file:
+
+src/test/java/com/example/AppTest.java
+
+Reason:
+The generated file uses old JUnit 3 syntax which causes compilation errors in modern Gradle versions.
+
+Step 9: Build Gradle Project
+
+Run:
+
+gradlew clean build
+Step 10: Run Gradle Application
+
+Run:
+
+gradlew run
+Gradle Output
+Hello, Maven
+This is the simple realworld example....
+Sum of 5 and 10 is 15
