@@ -1,0 +1,62 @@
+Step 1: Install WSL(if not present)
+Open PowerShell as Administrator and run:
+wsl --install
+or  if installed just wsl
+
+step 2: Update Ubuntu
+Paste: sudo apt update
+Enter your Ubuntu password.
+
+Step 3: Install Ansible
+Paste: sudo apt install ansible -y
+
+Step 4: Verify Ansible
+Paste: ansible --version
+
+step 5:Create Project Folder
+mkdir ansible_localhost
+cd ansible_localhost
+
+Step 6: Create Inventory File
+nano inventory
+[local]
+localhost ansible_connection=local
+
+Save;
+Ctrl + O
+Enter
+Ctrl + X
+
+Step 7: Test Inventory
+ansible all -i inventory -m ping
+
+Output:
+localhost | SUCCESS
+ping : pong
+
+Step 8: Create Playbook
+nano ansible.yml
+---
+- name: Install and run nginx on localhost
+  hosts: local
+  become: yes
+
+  tasks:
+
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+Step 9: Run Playbook
+sudo ansible-playbook -i inventory ansible.yml -K
+
+Step 10: Open Apache Page
+curl http://localhost
