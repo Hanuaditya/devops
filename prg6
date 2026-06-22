@@ -1,0 +1,35 @@
+Step 1: Start Jenkins
+Open browser:
+http://localhost:8080
+
+Step 2: Create Jenkins Job
+On Jenkins Dashboard:
+New Item
+Enter:Maven-CI
+Select:Freestyle Project
+Click:OK
+
+Step 3
+Under:
+Source Code Management
+Select:Git
+Paste your GitHub repository URL:
+https://github.com/Hanuaditya/devops_prg6_git.git
+Branch:*/main
+
+step 4: Add Maven Build Step
+Scroll to: Build
+Click: Add Build Step
+Choose: Invoke top-level Maven targets
+Goals: clean package
+Click:Advanced
+Enter:myapp/pom.xml
+
+step5: Publish Test Results
+Scroll to: Post Build Actions
+Choose: Publish JUnit Test Result Report
+Enter:myapp/target/surefire-reports/*.xml
+click save
+
+step6:
+Click:Build Now
