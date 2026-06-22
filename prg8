@@ -1,0 +1,145 @@
+Step 1: Create Maven Project
+mvn archetype:generate -DgroupId=com.example -DartifactId=myapp -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+Enter project:
+cd myapp
+Step 2: App.java
+Location:src/main/java/com/example/App.java
+package com.example;
+
+public class App {
+
+    public static int add(int a, int b) {
+        return a + b;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("2 + 3 = " + add(2,3));
+        System.out.println("Application executed successfully!");
+    }
+}
+
+Step 3: AppTest.java
+Location: src/test/java/com/example/AppTest.java
+
+package com.example;
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+public class AppTest {
+
+    @Test
+    public void testAdd() {
+        System.out.println("Running test: 2 + 3 = 5");
+        assertEquals(5, App.add(2,3));
+    }
+}
+Step 4: pom.xml
+Important part:
+
+<plugin>
+    <groupId>org.apache.maven.plugins</groupId>
+    <artifactId>maven-jar-plugin</artifactId>
+    <version>3.2.2</version>
+
+    <configuration>
+        <archive>
+            <manifest>
+                <addClasspath>true</addClasspath>
+                <mainClass>com.example.App</mainClass>
+            </manifest>
+        </archive>
+    </configuration>
+</plugin>
+
+This prevents:
+
+no main manifest attribute
+Step 5: Push to GitHub
+git init
+git add .
+git commit -m "Program 8"
+git branch -M main
+git remote add origin YOUR_REPO_URL
+git push -u origin main
+--------------------------------------------------------------this already done--------------------------------------------------------------
+Step 6: Jenkins Job
+Open:http://localhost:8080
+Create:New Item
+Name:Maven-CI
+Select:Freestyle Project
+
+
+Step 7: Configure Git
+Repository URL:https://github.com/USERNAME/REPO.git
+Branch:*/main
+
+Step 8: Maven Build
+Build Step:
+Invoke top-level Maven targets
+Goals:clean package
+
+POM:
+myapp/pom.xml
+
+Step 9: Publish Test Results
+Post Build Action:
+Publish JUnit Test Result Report
+Pattern:
+myapp/target/surefire-reports/*.xml
+
+Step 10: Build Now
+Click:Build Now
+Expected:BUILD SUCCESS
+
+Step 11: Create Ansible Folder
+in cmd administrator just type wsl
+in Ubuntu:
+mkdir ~/ansible_deploy
+cd ~/ansible_deploy
+
+Step 12: inventory
+nano inventory
+[local]
+localhost ansible_connection=local
+
+
+ansible all -i inventory -m ping
+Expected:
+pong
+
+
+Step 13: deploy.yml
+nano deploy.yml
+
+---
+- name: Deploy JAR from Jenkins
+  hosts: local
+  become: yes
+
+  tasks:
+
+    - name: Copy JAR
+      copy:
+        src: /mnt/c/ProgramData/Jenkins/.jenkins/workspace/Maven-CI/myapp/target/myapp-1.0-SNAPSHOT.jar
+        dest: /home/hanua/ansible_deploy/myapp-1.0-SNAPSHOT.jar
+        mode: '0755'
+
+    - name: Run JAR
+      shell: java -jar /home/hanua/ansible_deploy/myapp-1.0-SNAPSHOT.jar
+
+
+      
+Step 14: Deploy
+sudo ansible-playbook -i inventory deploy.yml
+
+Expected:
+PLAY RECAP
+localhost : ok=3 changed=2 failed=0
+
+Step 15: Verify
+
+java -jar /mnt/c/ProgramData/Jenkins/.jenkins/workspace/Maven-CI/myapp/target/myapp-1.0-SNAPSHOT.jar
+
+Output:
+2 + 3 = 5
+Application executed successfully!
